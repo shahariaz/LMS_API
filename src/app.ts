@@ -1,13 +1,16 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
 import { config } from "./config/config";
-
-const app = express();
-config.validateConfig();
+import httpResponse from "./utils/httpResponse";
+import path from "path";
+import globalErrorHandler from "./middleware/globalErrorHandler";
+import httpError from "./utils/httpError";
+import responseMessage from "./constant/responseMessage";
+const app: Application = express();
 
 app.use(helmet());
 app.use(express.json({ limit: "50mb" }));
@@ -27,8 +30,24 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
-app.get("/self", (req: Request, res: Response, next: NextFunction) => {
-  res.send("Hello World");
+app.use(express.static(path.join(__dirname, "../", "public")));
+app.get("/self", (req: Request, res: Response, _: NextFunction) => {
+  httpResponse(req, res, 200, "Welcome to LMS API!");
 });
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
+  const message = `Route ${req.originalUrl} not found`;
+  httpResponse(req, res, 404, message);
+});
+
+// 404 Handler
+app.use((req: Request, _: Response, next: NextFunction) => {
+  try {
+    throw new Error(responseMessage.NOT_FOUND("route"));
+  } catch (err) {
+    httpError(next, err, req, 404);
+  }
+});
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;
