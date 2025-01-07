@@ -16,3 +16,10 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ CourseId: Types.ObjectId }>;
 }
+export interface IRegistration {
+  name: string;
+  email: string;
+  password: string;
+  role?: "admin" | "teacher" | "student";
+  avatar?: string;
+}
