@@ -7,7 +7,7 @@ import helmet from "helmet";
 import { config } from "./config/config";
 import httpResponse from "./utils/httpResponse";
 import path from "path";
-import globalErrorHandler from "./middleware/globalErrorHandler";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
 import httpError from "./utils/httpError";
 import responseMessage from "./constant/responseMessage";
 const app: Application = express();
@@ -31,6 +31,12 @@ app.use(
   })
 );
 app.use(express.static(path.join(__dirname, "../", "public")));
+
+//Router
+import userRoute from "./routes/user.route";
+
+app.use("/api/v1", userRoute);
+
 app.get("/self", (req: Request, res: Response, _: NextFunction) => {
   httpResponse(req, res, 200, "Welcome to LMS API!");
 });

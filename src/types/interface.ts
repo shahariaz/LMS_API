@@ -23,3 +23,7 @@ export interface IRegistration {
   role?: "admin" | "teacher" | "student";
   avatar?: string;
 }
+export interface IActivation {
+  token: string;
+  activationCode: string;
+}

@@ -17,7 +17,7 @@ export type THttpErrorResponse = {
     method?: string;
     url?: string;
   };
-  message: string;
+  message: string | JSON;
   data: unknown;
   trace?: object | null;
 };
